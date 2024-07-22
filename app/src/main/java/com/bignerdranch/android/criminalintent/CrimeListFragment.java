@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
+    private static int mCrimeIndex;
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     @Override
@@ -41,7 +42,8 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+
+            mAdapter.notifyItemChanged(mCrimeIndex);
         }
     }
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -70,6 +72,7 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            mCrimeIndex = getAdapterPosition();
             startActivity(intent);
         }
         private Crime mCrime;

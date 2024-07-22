@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -28,11 +29,20 @@ public class CrimeListFragment extends Fragment {
         updateUI();
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTitleTextView;
@@ -40,18 +50,27 @@ public class CrimeListFragment extends Fragment {
         private CheckBox mSolvedCheckBox;
         public CrimeHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             mTitleTextView = (TextView)
                     itemView.findViewById(R.id.list_item_crime_title_text_view);
             mDateTextView = (TextView)
                     itemView.findViewById(R.id.list_item_crime_date_text_view);
             mSolvedCheckBox = (CheckBox)
                     itemView.findViewById(R.id.list_item_crime_solved_check_box);
+            // 设置CheckBox的点击监听器
+            mSolvedCheckBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 更新Crime对象的状态
+                    mCrime.setSolved(mSolvedCheckBox.isChecked());
+
+                }
+            });
         }
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(),
-                            mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
         private Crime mCrime;
         public void bindCrime(Crime crime) {

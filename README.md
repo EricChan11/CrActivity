@@ -1,1 +1,3 @@
-A project of a book called big nerd ranch guides (the second version) 
+A java project of a book called 
+
+android programing：big nerd ranch guide (the second version) 
